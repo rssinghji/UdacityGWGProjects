@@ -3,6 +3,7 @@ package com.udacity.sandwichclub;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +25,12 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+
+
+        descriptionTextView = (TextView) findViewById(R.id.description_tv);
+        akaNamesTextView = (TextView) findViewById(R.id.also_known_tv);
+        originTextView = (TextView) findViewById(R.id.origin_tv);
+        ingredientsTextView = (TextView) findViewById(R.id.ingredients_tv);
 
         ImageView ingredientsIv = findViewById(R.id.image_iv);
 
@@ -69,19 +76,15 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void populateUI(Sandwich sandwich) {
-        descriptionTextView = (TextView) findViewById(R.id.description_tv);
-        akaNamesTextView = (TextView) findViewById(R.id.also_known_tv);
-        originTextView = (TextView) findViewById(R.id.origin_tv);
-        ingredientsTextView = (TextView) findViewById(R.id.ingredients_tv);
 
         descriptionTextView.setText(sandwich.getDescription().toString());
 
-        String akaNames = String.join(", ",sandwich.getAlsoKnownAs());
+        String akaNames = TextUtils.join(", ",sandwich.getAlsoKnownAs());
         akaNamesTextView.setText(akaNames);
 
         originTextView.setText(sandwich.getPlaceOfOrigin().toString());
 
-        String ingredients = String.join(", ", sandwich.getIngredients());
+        String ingredients = TextUtils.join(", ", sandwich.getIngredients());
         ingredientsTextView.setText(ingredients);
     }
 }
