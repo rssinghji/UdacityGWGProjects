@@ -2,6 +2,8 @@ package utilities;
 
 import android.net.Uri;
 
+import com.project.android.popularmovies.BuildConfig;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -14,8 +16,8 @@ public final class NetworkUtils {
     //Create a place holder URL for movies retrieval API
     private static final String MOVIES_DATA_URL = "http://api.themoviedb.org/3/movie/";
 
-    //Set your auth key here in place of 0's
-    private static final String AUTH_KEY = "?api_key=00000";
+    //Set your auth key here in BuildConfig and add your own key in gradle.properties
+    private static final String AUTH_KEY = "?api_key=" + BuildConfig.API_KEY;
 
     //Set Response Format
     private static final String format = "json";
