@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+    <!-- Create strings for the menu and layout items -->
+    <string name="error_message">Couldn\'t load movies</string>
+    <string name="detailed_error_message">Couldn\'t load the movie details</string>
+    <string name="synopsis_header">Synopsis</string>
+    <string name="sort_popular">Sort By: Popularity</string>
+    <string name="sort_top_rated">Sort By: Top Rated</string>
+    <string name="detail_activity_label">Movie Details</string>
+    <string name="content_description">Movie Poster</string>
+    <string name="spinner_title">Sort Order</string>
+    <string-array name="options_list">
+        <item>Sort By: Popularity</item>
+        <item>Sort By: Rating</item>
+    </string-array>
+</resources>
