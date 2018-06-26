@@ -255,8 +255,15 @@ LoaderManager.LoaderCallbacks<Movie[]>{
                     mMovieDetailsAdapter.setMoviesData(mMovieListPopular);
                     mMoviesData = mMovieListPopular;
                 }
+            case R.id.action_show_favorites:
+                launchFavoriteActivity();
                 break;
         }
         return true;
+    }
+
+    private void launchFavoriteActivity() {
+        Intent intent = new Intent(this,FavoritesActivity.class);
+        startActivity(intent);
     }
 }

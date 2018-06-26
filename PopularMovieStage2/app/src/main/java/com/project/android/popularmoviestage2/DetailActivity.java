@@ -24,11 +24,13 @@ import android.widget.Toast;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
 
+import com.project.android.popularmoviestage2.data.DataContentProvider;
 import com.project.android.popularmoviestage2.data.FavoriteSelectionContract;
 import com.project.android.popularmoviestage2.data.FavoriteSelectionDBHelper;
 import com.squareup.picasso.Picasso;
 import android.support.v7.app.ActionBar;
 
+import java.net.URI;
 import java.net.URL;
 
 import model.Movie;
@@ -43,11 +45,6 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
-class MovieDetailLoader {
-    public MovieTrailer[] trailers;
-    public MovieReview[]  reviews;
-}
-
 //Create a separate activity to show movie detail screen
 public class DetailActivity extends AppCompatActivity implements MovieTrailersAdapter.MovieTrailersAdapterOnClickHandler
 {
@@ -61,7 +58,6 @@ public class DetailActivity extends AppCompatActivity implements MovieTrailersAd
 
     //Create a place holder for reviews
     private static MovieReview[] mReviews;
-    private static MovieDetailLoader mMovieTrailersReviews;
 
     //Creating corresponding views for text and poster and then trailers
     private TextView mMovieOriginalTitleTextView;
@@ -202,14 +198,17 @@ public class DetailActivity extends AppCompatActivity implements MovieTrailersAd
 
     private void checkInfoAvailable(Movie movie) {
         String[] whereArgs = new String[]{String.valueOf(movie.getId())};
-        Cursor cursor = mDB.query("favorite_movies",
+        String queryUri = FavoriteSelectionContract.FavoriteSelectionEntry.CONTENT_URI.toString();
+        Cursor cursor = getContentResolver().query(Uri.parse(queryUri),null,"movie_id=?",
+        whereArgs,null);
+        /*Cursor cursor = mDB.query("favorite_movies",
         null,
         "movie_id=?",
             whereArgs,
             null,
             null,
             null
-        );
+        );*/
         int cursorCount = cursor.getCount();
         if(cursorCount == 0){
             //Insert Movie details and toggle favorite icon
@@ -222,7 +221,10 @@ public class DetailActivity extends AppCompatActivity implements MovieTrailersAd
             contentValues.put(FavoriteSelectionContract.FavoriteSelectionEntry.RATING, movie.getUserRating());
             contentValues.put(FavoriteSelectionContract.FavoriteSelectionEntry.RELEASE_DATE, movie.getReleaseDate());
 
-            mDB.insert(FavoriteSelectionContract.FavoriteSelectionEntry.TABLE_NAME, null, contentValues);
+            Uri result = getContentResolver().insert(Uri.parse(queryUri), contentValues);
+            if(result == null)
+                Log.d("Insert Error"," In Detail Activity");
+            //mDB.insert(FavoriteSelectionContract.FavoriteSelectionEntry.TABLE_NAME, null, contentValues);
             mFavoriteSelectionTextView.setText(R.string.set_favorite_string);
             Picasso.with(this).load(R.drawable.favorite_icon).into(mFavoriteSelectionImageView);
         }
@@ -243,8 +245,11 @@ public class DetailActivity extends AppCompatActivity implements MovieTrailersAd
             contentValues.put(FavoriteSelectionContract.FavoriteSelectionEntry.POSTER_URL, movie.getMoviePosterImage());
             contentValues.put(FavoriteSelectionContract.FavoriteSelectionEntry.RATING, movie.getUserRating());
             contentValues.put(FavoriteSelectionContract.FavoriteSelectionEntry.RELEASE_DATE, movie.getReleaseDate());
-            mDB.update(FavoriteSelectionContract.FavoriteSelectionEntry.TABLE_NAME, contentValues,"movie_id=?",
-            whereArgs);
+
+            int result = getContentResolver().update(Uri.parse(queryUri),contentValues, "movie_id=?",whereArgs);
+            //mDB.update(FavoriteSelectionContract.FavoriteSelectionEntry.TABLE_NAME, contentValues,"movie_id=?",whereArgs);
+            if(result == 0)
+                Log.d("Update: ","No rows affected (Detail Activity)");
             if(selection == 1)
             {
                 mFavoriteSelectionTextView.setText(R.string.set_favorite_string);
@@ -255,10 +260,15 @@ public class DetailActivity extends AppCompatActivity implements MovieTrailersAd
                 Picasso.with(this).load(R.drawable.unfavorite_icon).into(mFavoriteSelectionImageView);
             }
         }
+        cursor.close();
     }
 
     private void readOriginalFavoriteSelection(Movie movie){
         String[] whereArgs = new String[]{String.valueOf(movie.getId())};
+        String queryUri = FavoriteSelectionContract.FavoriteSelectionEntry.CONTENT_URI.toString();
+        Cursor cursor = getContentResolver().query(Uri.parse(queryUri),null,"movie_id=?",
+        whereArgs,null);
+        /*
         Cursor cursor = mDB.query("favorite_movies",
         null,
         "movie_id=?",
@@ -266,7 +276,9 @@ public class DetailActivity extends AppCompatActivity implements MovieTrailersAd
         null,
         null,
         null
-        );
+        );*/
+        if(cursor == null)
+            Log.e("cursor","NULL returned as Cursor");
         int cursorCount = cursor.getCount();
         if(cursorCount == 0){
             mFavoriteSelectionTextView.setText(R.string.default_favorite_string);
@@ -285,6 +297,8 @@ public class DetailActivity extends AppCompatActivity implements MovieTrailersAd
                 Picasso.with(this).load(R.drawable.unfavorite_icon).into(mFavoriteSelectionImageView);
             }
         }
+
+        cursor.close();
     }
 
     /*
